@@ -29,14 +29,23 @@ pipeline {
             }
         }
 
-        stage('Terraform Apply/Destroy') {
+        stage('Terraform Plan') {
             steps {
                 script {
                     if (params.ACTION == 'apply') {
-                        sh 'terraform apply -auto-approve tfplan'
+                        sh 'terraform plan -out=tfplan'
+                    } else if (params.ACTION == 'destroy') {
+                        sh 'terraform plan -destroy -out=tfplan'
                     }
-                    if (params.ACTION == 'destroy') {
-                        sh 'terraform destroy -auto-approve tfplan'
+                }
+            }
+        }
+
+        stage('Terraform Apply/Destroy') {
+            steps {
+                script {
+                    if (params.ACTION == 'apply' || params.ACTION == 'destroy') {
+                        sh 'terraform apply -auto-approve tfplan'
                     }
                 }
             }
