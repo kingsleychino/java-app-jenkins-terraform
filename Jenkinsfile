@@ -44,8 +44,11 @@ pipeline {
         stage('Terraform Apply/Destroy') {
             steps {
                 script {
-                    if (params.ACTION == 'apply' || params.ACTION == 'destroy') {
+                    if (params.ACTION == 'apply') {
                         sh 'terraform apply -auto-approve tfplan'
+                    }
+                    if (params.ACTION == 'destroy') {
+                        sh 'terraform destroy -auto-approve tfplan'
                     }
                 }
             }
