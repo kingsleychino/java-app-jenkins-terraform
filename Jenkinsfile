@@ -14,28 +14,46 @@ pipeline {
     }
 
     stage('Terraform Init') {
-      steps {
-        sh 'terraform init'
-      }
-    }
+            steps {
+                sh 'terraform init'
+            }
+        }
 
-    stage('Terraform Plan') {
-      steps {
-        sh 'terraform plan -out=tfplan'
-      }
-    }
+        stage('Terraform Validate') {
+            steps {
+                sh 'terraform validate'
+            }
+        }
 
-    stage('Terraform Apply') {
-      steps {
-        input message: "Apply Terraform changes?"
-        sh 'terraform apply tfplan'
-      }
-    }
+        stage('Terraform Plan') {
+            steps {
+                script {
+                    if (params.ACTION == 'apply') {
+                        sh 'terraform plan -out=tfplan'
+                    } else if (params.ACTION == 'destroy') {
+                        sh 'terraform plan -destroy -out=tfplan'
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Apply/Destroy') {
+            steps {
+                script {
+                    if (params.ACTION == 'apply' || params.ACTION == 'destroy') {
+                        sh 'terraform apply -auto-approve tfplan'
+                    }
+                }
+            }
+        }
   }
 
   post {
     failure {
       echo 'Terraform failed.'
+    }
+    always {
+            cleanWs()
     }
   }
 }
