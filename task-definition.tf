@@ -10,7 +10,8 @@ resource "aws_ecs_task_definition" "java_task" {
   container_definitions = jsonencode([
     {
       name      = "java-app"
-      image     = "503499294473.dkr.ecr.us-east-1.amazonaws.com/simple-java-app:latest" 
+      # image     = "503499294473.dkr.ecr.us-east-1.amazonaws.com/simple-java-app:latest"
+      image     = "${ECR_REPO}:${IMAGE_TAG}"
       essential = true
       portMappings = [
         {
