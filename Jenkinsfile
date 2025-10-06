@@ -28,6 +28,11 @@ pipeline {
                 sh 'terraform show -no-color tfplan > tfplan.txt'
             }
         }
+        stage('Terraform Import Log Group') {
+        steps {
+                sh 'terraform import aws_cloudwatch_log_group.ecs_logs /ecs/java-app || true'
+            }
+        }
         stage('Apply / Destroy') {
             steps {
                 script {
