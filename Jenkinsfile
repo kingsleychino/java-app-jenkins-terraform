@@ -29,18 +29,6 @@ pipeline {
             }
         }
 
-        stage('Terraform Plan') {
-            steps {
-                script {
-                    if (params.ACTION == 'apply') {
-                        sh 'terraform plan -out=tfplan'
-                    } else if (params.ACTION == 'destroy') {
-                        sh 'terraform plan -destroy -out=tfplan'
-                    }
-                }
-            }
-        }
-
         stage('Terraform Apply/Destroy') {
             steps {
                 script {
