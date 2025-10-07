@@ -19,7 +19,7 @@ pipeline {
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-creds', url: 'https://github.com/kingsleychino/java-app-jenkins-terraform']])
             }
         }
-
+/***
         stage('Build Docker Image') {
             steps {
                 script {
@@ -53,7 +53,7 @@ pipeline {
                 }
             }
         }
-
+***/
         stage('Terraform Init') {
             steps {
                 sh 'terraform init'
