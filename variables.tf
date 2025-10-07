@@ -9,6 +9,6 @@ variable "image_tag" {
 }
 
 variable "environment" {
-  description = "Deployment environment name (e.g., dev, staging, prod)"
+  description = "Deployment environment name"
   type        = string
 }
