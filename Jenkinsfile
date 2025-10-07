@@ -26,7 +26,7 @@ pipeline {
                     sh """
                     echo "🔨 Building Docker image..."
                     docker build -t ${ECR_REPO}:${IMAGE_TAG} .
-                    docker tag ${ECR_REPO}:${IMAGE_TAG} ${ECR_REPO}:latest
+                    docker tag ${ECR_REPO}:${IMAGE_TAG} ${ECR_REPO}:${IMAGE_TAG}
                     """
                 }
             }
