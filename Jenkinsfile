@@ -71,13 +71,6 @@ pipeline {
             }
         }
 
-        // Optional: Import log group if needed
-        // stage('Terraform Import Log Group') {
-        //     steps {
-        //         sh 'terraform import aws_cloudwatch_log_group.ecs_logs /ecs/java-app || true'
-        //     }
-        // }
-
         stage('Apply / Destroy') {
             steps {
                 script {
