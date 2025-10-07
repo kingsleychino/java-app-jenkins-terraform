@@ -26,7 +26,6 @@ pipeline {
                     sh """
                     echo "🔨 Building Docker image..."
                     docker build -t ${ECR_REPO}:${IMAGE_TAG} .
-                    docker tag ${ECR_REPO}:${IMAGE_TAG} ${ECR_REPO}:${IMAGE_TAG}
                     """
                 }
             }
@@ -50,7 +49,6 @@ pipeline {
                     sh """
                     echo "📤 Pushing Docker image to ECR..."
                     docker push ${ECR_REPO}:${IMAGE_TAG}
-                    docker push ${ECR_REPO}:latest
                     """
                 }
             }
