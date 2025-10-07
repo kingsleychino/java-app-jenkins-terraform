@@ -9,7 +9,7 @@ pipeline {
     environment {
         AWS_DEFAULT_REGION = 'us-east-1'
         TF_IN_AUTOMATION = 'true'
-        ECR_REPO      = "503499294473.dkr.ecr.${AWS_REGION}.amazonaws.com/simple-java-app"
+        ECR_REPO      = "503499294473.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/simple-java-app"
         IMAGE_TAG     = "build-${BUILD_NUMBER}" 
     }
 
@@ -36,7 +36,7 @@ pipeline {
                 script {
                     sh """
                     echo "🔐 Logging in to ECR..."
-                    aws ecr get-login-password --region ${AWS_REGION} | \
+                    aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | \
                     docker login --username AWS --password-stdin ${ECR_REPO}
                     """
                 }
