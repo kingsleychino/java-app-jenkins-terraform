@@ -9,6 +9,10 @@ resource "aws_iam_role_policy_attachment" "ecs_exec_role_policy" {
 }
 
 resource "aws_cloudwatch_log_group" "ecs_logs" {
-  name              = "/ecs/java-app"
+  name              = "/ecs/java-app-${var.environment}"
   retention_in_days = 7
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
