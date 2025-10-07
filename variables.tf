@@ -1,0 +1,9 @@
+variable "ecr_repo" {
+  description = "ECR repository URL"
+  type        = string
+}
+
+variable "image_tag" {
+  description = "Docker image tag"
+  type        = string
+}
