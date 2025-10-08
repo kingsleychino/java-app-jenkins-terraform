@@ -11,6 +11,7 @@ pipeline {
         TF_IN_AUTOMATION   = 'true'
         ECR_REPO           = "503499294473.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/simple-java-app"
         IMAGE_TAG          = "build-${BUILD_NUMBER}" 
+        TERRAFORM_DIR = "./terraform"
     }
 
     stages {
@@ -56,36 +57,42 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                dir("${TERRAFORM_DIR}") {
+                    sh 'terraform init'
+                }
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                sh """
-                terraform plan -out=tfplan \
-                  -var="ecr_repo=${ECR_REPO}" \
-                  -var="image_tag=${IMAGE_TAG}"
-                terraform show -no-color tfplan > tfplan.txt
-                """
+                dir("${TERRAFORM_DIR}") {
+                    sh """
+                    terraform plan -out=tfplan \
+                    -var="ecr_repo=${ECR_REPO}" \
+                    -var="image_tag=${IMAGE_TAG}"
+                    terraform show -no-color tfplan > tfplan.txt
+                    """
+                }
             }
         }
 
         stage('Apply / Destroy') {
             steps {
-                script {
-                    if (params.action == 'apply') {
-                        if (!params.autoApprove) {
-                            def plan = readFile 'tfplan.txt'
-                            input message: "Do you want to apply this plan?",
-                            parameters: [text(name: 'Plan', description: 'Review the plan below', defaultValue: plan)]
-                        }
+                dir("${TERRAFORM_DIR}") {
+                    script {
+                        if (params.action == 'apply') {
+                            if (!params.autoApprove) {
+                                def plan = readFile 'tfplan.txt'
+                                input message: "Do you want to apply this plan?",
+                                parameters: [text(name: 'Plan', description: 'Review the plan below', defaultValue: plan)]
+                            }
 
-                        sh "terraform apply -input=false tfplan"
-                    } else if (params.action == 'destroy') {
-                        sh "terraform destroy -auto-approve -var=\"ecr_repo=${ECR_REPO}\" -var=\"image_tag=${IMAGE_TAG}\""
-                    } else {
-                        error "Invalid action selected. Choose 'apply' or 'destroy'."
+                            sh "terraform apply -input=false tfplan"
+                        } else if (params.action == 'destroy') {
+                            sh "terraform destroy -auto-approve -var=\"ecr_repo=${ECR_REPO}\" -var=\"image_tag=${IMAGE_TAG}\""
+                        } else {
+                            error "Invalid action selected. Choose 'apply' or 'destroy'."
+                        }
                     }
                 }
             }
